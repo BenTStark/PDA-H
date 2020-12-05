@@ -1,0 +1,7 @@
+-- SCHEMA: club
+
+-- DROP SCHEMA club ;
+
+CREATE SCHEMA root;
+CREATE SCHEMA club;
+CREATE SCHEMA sport;

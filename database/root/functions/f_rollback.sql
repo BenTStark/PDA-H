@@ -1,0 +1,3 @@
+CREATE OR REPLACE FUNCTION f_rollback(var_schema VARCHAR(256),var_table VARCHAR(256),var_timestamp TIMESTAMPTZ, var_delete_rollback_records BOOLEAN)
+
+--TODO....
