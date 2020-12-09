@@ -12,10 +12,9 @@ BEGIN
     sql:= FORMAT($Dynamic$
         SELECT
             COUNT(DISTINCT indexname) > 0 FROM pg_indexes
-        WHERE
-            1 = 1
-            AND schemaname = '%s'
-            AND indexname = '%s';
+        WHERE 1 = 1
+        AND schemaname = '%s'
+        AND indexname = '%s';
     $Dynamic$,
     var_schema_name,
     var_index_name)::TEXT;
@@ -25,7 +24,7 @@ BEGIN
                 $Dynamic$,
                 var_index_name)::TEXT;
         EXECUTE sql;
-            END IF;
-        RETURN exist_test;
-        END;
+    END IF;
+RETURN exist_test;
+END;
 $Body$

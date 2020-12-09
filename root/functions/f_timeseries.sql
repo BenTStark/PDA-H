@@ -111,8 +111,9 @@ BEGIN
     -- PRIMARY KEY Columns except timeseries specific columns
     sql:= FORMAT($Dynamic$
         SELECT
-            a.attname AS NAME FROM pg_index i
-            JOIN pg_attribute a ON a.attrelid = i.indrelid
+            a.attname AS NAME 
+        FROM pg_index i
+        JOIN pg_attribute a ON a.attrelid = i.indrelid
             AND a.attnum = ANY (i.indkey)
         WHERE
             1 = 1

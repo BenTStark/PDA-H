@@ -1,6 +1,7 @@
 #!/bin/bash
 echo -e "\e[1mStarting DB Install Script\e[0m"
 file=$1
+username="pi"
 
 if [ ${#file} -eq 0 ]
 then
@@ -63,7 +64,8 @@ do
   # no empty lines and no comments
   if [ ${#line} -gt 1 ] && [ ${line:0:1} != "#" ]
   then
-    psql -U $username -d stkgarching -f ${line}
+    echo "Login with user ${username}"
+    psql -U $username -d dev -f ${line}
     echo -e "${line} proccessed"
   fi
 done < "$file"

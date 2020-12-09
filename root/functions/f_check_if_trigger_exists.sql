@@ -13,10 +13,9 @@ BEGIN
     sql:= FORMAT($Dynamic$
         SELECT
             COUNT(DISTINCT trigger_name) > 0 FROM information_schema.triggers
-        WHERE
-            1 = 1
-            AND trigger_schema = '%s'
-            AND trigger_name = '%s';
+        WHERE 1 = 1
+        AND trigger_schema = '%s'
+        AND trigger_name = '%s';
     $Dynamic$,
     var_schema_name,
     var_trigger_name)::TEXT;
@@ -26,8 +25,8 @@ BEGIN
                 $Dynamic$,
                 var_trigger_name,
                 var_target_name)::TEXT;
-            END IF;
         EXECUTE sql;
-        RETURN exist_test;
-        END;
+    END IF;
+    RETURN exist_test;
+END;
 $Body$

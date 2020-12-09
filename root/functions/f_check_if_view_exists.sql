@@ -14,10 +14,9 @@ BEGIN
     EXECUTE FORMAT($Dynamic$
         SELECT
             COUNT(DISTINCT table_name) > 0 FROM information_schema.views
-        WHERE
-            1 = 1
-            AND table_schema = '%s'
-            AND table_name = '%s';
+        WHERE 1 = 1
+        AND table_schema = '%s'
+        AND table_name = '%s';
     $Dynamic$,
     var_schema_name,
     var_view_name) INTO exist_test;
@@ -25,7 +24,7 @@ BEGIN
         EXECUTE FORMAT($Dynamic$ DROP VIEW IF EXISTS %s;
                 $Dynamic$,
                 view_name);
-            END IF;
-        RETURN exist_test;
-        END;
+    END IF;
+    RETURN exist_test;
+END;
 $Body$

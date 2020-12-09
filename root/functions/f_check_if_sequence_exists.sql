@@ -15,10 +15,9 @@ BEGIN
         SELECT
             COUNT(DISTINCT p.relname) > 0 FROM pg_class p
         INNER JOIN pg_namespace n ON p.relnamespace = n.OID
-        WHERE
-            1 = 1
-            AND n.nspname = '%s'
-            AND p.relname = '%s';
+        WHERE 1 = 1
+        AND n.nspname = '%s'
+        AND p.relname = '%s';
     $Dynamic$,
     var_schema_name,
     var_sequence_name)::TEXT;
@@ -27,8 +26,8 @@ BEGIN
        sql:= FORMAT($Dynamic$ DROP SEQUENCE IF EXISTS %s;
               $Dynamic$,
               full_sequence_name)::TEXT;
-      EXECUTE sql;
-          END IF;
-      RETURN exist_test;
-      END;
+        EXECUTE sql;
+    END IF;
+    RETURN exist_test;
+END;
 $Body$

@@ -1,8 +1,6 @@
--- Database: stkgarching
+--DROP DATABASE dev;
 
--- DROP DATABASE stkgarching;
-
-CREATE DATABASE stkgarching
+CREATE DATABASE dev
     WITH 
     ENCODING = 'UTF8'
     LC_COLLATE = 'en_GB.UTF-8'

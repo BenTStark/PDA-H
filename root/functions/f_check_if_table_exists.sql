@@ -14,10 +14,9 @@ BEGIN
     sql:= FORMAT($Dynamic$
         SELECT
             COUNT(DISTINCT table_name) > 0 FROM information_schema.tables
-        WHERE
-            1 = 1
-            AND table_schema = '%s'
-            AND table_name = '%s';
+        WHERE 1 = 1
+        AND table_schema = '%s'
+        AND table_name = '%s';
     $Dynamic$,
     var_schema_name,
     var_table_name)::TEXT;
@@ -27,7 +26,7 @@ BEGIN
                 $Dynamic$,
                 full_table_name)::TEXT;
         EXECUTE sql;
-            END IF;
-        RETURN exist_test;
-        END;
+    END IF;
+    RETURN exist_test;
+END;
 $Body$
