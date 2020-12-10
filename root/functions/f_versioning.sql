@@ -102,7 +102,6 @@ BEGIN
     LOOP
 
         column_list := CONCAT(column_list,FORMAT($Columns$,prefix.%s$Columns$,column_info[1])::TEXT);
-        raise notice 'COL: %', column_info;
         IF column_info[1]::TEXT = 'v_valid_from' THEN
             column_list_values := CONCAT(column_list_values,',now()');
         ELSEIF column_info[1]::TEXT = 'v_valid_to' THEN    
@@ -115,8 +114,6 @@ BEGIN
             column_list_values := CONCAT(column_list_values,',USER::TEXT');
         END IF;
 
-
-        --raise notice '%s, %s, %s', a[1],a[2],a[3];
         IF (SELECT update_columns @> FORMAT('{%s}',column_info[1])::TEXT [ ]) THEN
             -- NEW COLUMN VALUES WILL ONLY BE UPDATED
             has_update:= CONCAT(has_update, FORMAT($Case$
@@ -239,11 +236,6 @@ BEGIN
         
         EXECUTE FORMAT(%1$s)::TEXT INTO cnt,has_ignore,has_update,has_increment;
 
-        raise notice 'cnt: %%',cnt;
-        raise notice 'has_ignore: %%',has_ignore;
-        raise notice 'has_update: %%',has_update;
-        raise notice 'has_increment: %%',has_increment;
-        raise notice 'UPDATE/INSERT';
         IF cnt = 0 THEN
             -- Primary Key not existing
             INSERT INTO %2$s.%3$s (%4$s) VALUES (%5$s);
@@ -260,7 +252,6 @@ BEGIN
             END IF;
         END IF;
     ELSEIF TG_OP = 'DELETE' THEN
-        raise notice 'DELETE';
 
         UPDATE %2$s.%3$s SET v_valid_to = now(), v_last_change=now() ,v_changed_by = USER::TEXT WHERE 1=1 %9$s;
         INSERT INTO %2$s.%3$s (%4$s) VALUES (%6$s);

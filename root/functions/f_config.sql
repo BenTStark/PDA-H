@@ -144,6 +144,7 @@ BEGIN
     
     
     IF var_timeseries THEN
+        /*
         PERFORM
             root.f_timeseries (var_schema_name,
                 var_table_name);
@@ -161,6 +162,8 @@ BEGIN
         , var_schema_name
         , var_table_name
         , new_columns)::TEXT);
+        */
+        SELECT root.f_timeseries(var_schema_name,var_table_name) INTO function_body;
         
         sql_v:= FORMAT($Dynamic$ 
             CREATE OR REPLACE VIEW %s
@@ -181,6 +184,10 @@ BEGIN
             RETURNS TRIGGER
             LANGUAGE 'plpgsql'
             AS %s
+            DECLARE
+                insert_sql TEXT;
+                insert_sql_dublicate TEXT [];
+                insert_sql_update  TEXT [];
             BEGIN
                 %s 
             RETURN NULL;
@@ -189,7 +196,7 @@ BEGIN
             , var_schema_name
             , var_table_name
             , double_dollar
-            , functions
+            , function_body
             , double_dollar)::TEXT;
             
         sql_t:= FORMAT($Dynamic$ 
@@ -208,7 +215,6 @@ BEGIN
 
     IF var_changelog THEN
     
-    ------------
     SELECT root.f_changelog(var_schema_name,var_table_name) INTO function_body;
     -- CREATE TRIGGER FUNCTION SQL QUERY
     sql_tf:= FORMAT($Dynamic$ 
