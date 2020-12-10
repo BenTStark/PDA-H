@@ -114,7 +114,7 @@ BEGIN
                 has_increment INT DEFAULT 0;
             BEGIN
                 %s 
-            RETURN NULL;
+                RETURN NULL;
             END; %s
             $Dynamic$
             , var_schema_name
@@ -207,6 +207,8 @@ BEGIN
     END IF;
 
     IF var_changelog THEN
+    
+    -- WEG
     PERFORM
         root.f_changelog (var_schema_name,
             var_table_name);
@@ -217,23 +219,26 @@ BEGIN
     $Dynamic$
     , var_schema_name
     , var_table_name)::TEXT);
-
+    ------------
+    SELECT root.f_changelog(var_schema_name,var_table_name) INTO function_body;
+    -- CREATE TRIGGER FUNCTION SQL QUERY
     sql_tf:= FORMAT($Dynamic$ 
         CREATE OR REPLACE FUNCTION %s.tf_after_%s ()
         RETURNS TRIGGER
         LANGUAGE 'plpgsql'
         AS %s
         BEGIN
-            %s RETURN NULL;
+            %s 
+            RETURN NULL;
         END %s;
         $Dynamic$
         , var_schema_name
         , var_table_name
         , double_dollar
-        , functions
+        , function_body
         , double_dollar)::TEXT;
-    EXECUTE sql_tf;
-
+    
+    -- CREATE TRIGGER SQL QUERY
     sql_t:= FORMAT($Dynamic$ 
         CREATE TRIGGER t_after_%s AFTER INSERT
         OR DELETE
@@ -245,6 +250,9 @@ BEGIN
         , table_name
         , var_schema_name
         , var_table_name)::TEXT;
+
+    -- EXECUTE STATMENTS
+    EXECUTE sql_tf;
     EXECUTE sql_t;
     END IF;
 END;
