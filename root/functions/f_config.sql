@@ -218,6 +218,22 @@ BEGIN
     , var_schema_name
     , var_table_name)::TEXT);
 
+    sql_tf:= FORMAT($Dynamic$ 
+        CREATE OR REPLACE FUNCTION %s.tf_after_%s ()
+        RETURNS TRIGGER
+        LANGUAGE 'plpgsql'
+        AS %s
+        BEGIN
+            %s RETURN NULL;
+        END %s;
+        $Dynamic$
+        , var_schema_name
+        , var_table_name
+        , double_dollar
+        , functions
+        , double_dollar)::TEXT;
+    EXECUTE sql_tf;
+
     sql_t:= FORMAT($Dynamic$ 
         CREATE TRIGGER t_after_%s AFTER INSERT
         OR DELETE
