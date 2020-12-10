@@ -6,6 +6,7 @@ CREATE OR REPLACE FUNCTION root.f_config (var_schema_name VARCHAR(256), var_tabl
 AS $Body$
 DECLARE
     table_name VARCHAR(256);
+    var_table_name_ext VARCHAR(256);
     view_name VARCHAR(256);
     versionised_view_name VARCHAR(256);
     versionised_delete_view_name VARCHAR(256);
@@ -22,7 +23,13 @@ DECLARE
 BEGIN
     double_dollar:= FORMAT('%s', CONCAT(CHR(36), 'Body', CHR(36)));
     table_name:= FORMAT('%s.%s', var_schema_name, var_table_name);
-    view_name:= FORMAT('%s.v_%s', var_schema_name, var_table_name);
+    IF var_versioning THEN
+        view_name:= FORMAT('%s.vt_%s', var_schema_name, SUBSTRING(var_table_name,4));
+        var_table_name_ext := SUBSTRING(var_table_name,4);
+    ELSE
+        view_name:= FORMAT('%s.vt_%s', var_schema_name, var_table_name);
+        var_table_name_ext := var_table_name;
+    END IF;
     versionised_view_name:= FORMAT('%s.vv_%s', var_schema_name, SUBSTRING(var_table_name,4));
     versionised_delete_view_name:= FORMAT('%s.vd_%s', var_schema_name, SUBSTRING(var_table_name,4));
     -- table columns
@@ -83,6 +90,7 @@ BEGIN
             , versionised_view_name
             , columns
             , table_name)::TEXT;
+        raise notice 'CREATE %', versionised_view_name;
         EXECUTE sql_v;
         -- VERSIONISED DELETE VIEW
         sql_v:= FORMAT($Dynamic$ 
@@ -96,6 +104,7 @@ BEGIN
             , versionised_delete_view_name
             , columns
             , table_name)::TEXT;
+        raise notice 'CREATE %', versionised_delete_view_name;
         EXECUTE sql_v;
         
         -- CREATE FUNCTION STRING TO HANDLE VERSIONING. STRING WILL BE IMPLEMENTED INTO TRIGGER FUNCTION
@@ -137,33 +146,16 @@ BEGIN
             , var_schema_name
             , SUBSTRING(var_table_name,4))::TEXT;
         -- EXECUTE STATMENTS
+        raise notice 'CREATE tf_instead_of_vv_%', SUBSTRING(var_table_name,4);
         EXECUTE sql_tf;
+        raise notice 'CREATE t_instead_of_vv_%', SUBSTRING(var_table_name,4);
         EXECUTE sql_t;
 
     END IF;   
     
     
     IF var_timeseries THEN
-        /*
-        PERFORM
-            root.f_timeseries (var_schema_name,
-                var_table_name);
-        functions:= CONCAT(functions, FORMAT($Dynamic$
-                PERFORM
-                    %s.f_%s_timeseries (%s);
-        $Dynamic$
-        , var_schema_name
-        , var_table_name
-        , new_columns)::TEXT);
-        functions:= CONCAT(functions, FORMAT($Dynamic$
-                PERFORM
-                    %s.f_%s_timeseries_afterburner (%s);
-        $Dynamic$
-        , var_schema_name
-        , var_table_name
-        , new_columns)::TEXT);
-        */
-        SELECT root.f_timeseries(var_schema_name,var_table_name) INTO function_body;
+        SELECT root.f_timeseries(var_schema_name,var_table_name,var_versioning) INTO function_body;
         
         sql_v:= FORMAT($Dynamic$ 
             CREATE OR REPLACE VIEW %s
@@ -177,10 +169,11 @@ BEGIN
             , view_name
             , columns
             , table_name)::TEXT;
+        raise notice 'CREATE %', view_name;
         EXECUTE sql_v;
  
         sql_tf:= FORMAT($Dynamic$ 
-            CREATE OR REPLACE FUNCTION %s.tf_instead_of_v_%s ()
+            CREATE OR REPLACE FUNCTION %s.tf_instead_of_vt_%s ()
             RETURNS TRIGGER
             LANGUAGE 'plpgsql'
             AS %s
@@ -194,22 +187,24 @@ BEGIN
             END; %s
             $Dynamic$
             , var_schema_name
-            , var_table_name
+            , var_table_name_ext
             , double_dollar
             , function_body
             , double_dollar)::TEXT;
             
         sql_t:= FORMAT($Dynamic$ 
-            CREATE TRIGGER t_instead_of_v_%s INSTEAD OF INSERT
+            CREATE TRIGGER t_instead_of_vt_%s INSTEAD OF INSERT
             OR
             UPDATE
-            ON %s FOR EACH ROW EXECUTE PROCEDURE %s.tf_instead_of_v_%s ();
+            ON %s FOR EACH ROW EXECUTE PROCEDURE %s.tf_instead_of_vt_%s ();
             $Dynamic$
-            , var_table_name
+            , var_table_name_ext
             , view_name
             , var_schema_name
-            , var_table_name)::TEXT;
+            , var_table_name_ext)::TEXT;
+        raise notice 'CREATE tf_instead_of_vt_%', var_table_name_ext;
         EXECUTE sql_tf;
+        raise notice 'CREATE t_instead_of_vt_%', var_table_name_ext;
         EXECUTE sql_t;
     END IF;
 
@@ -247,7 +242,9 @@ BEGIN
         , var_table_name)::TEXT;
 
     -- EXECUTE STATMENTS
+    raise notice 'CREATE tf_after_%', var_table_name;
     EXECUTE sql_tf;
+    raise notice 'CREATE t_after_%', var_table_name;
     EXECUTE sql_t;
     END IF;
 END;

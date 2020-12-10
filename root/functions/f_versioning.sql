@@ -76,7 +76,7 @@ BEGIN
     , var_table_name )::TEXT into columns_info;
 
     IF var_update_columns IS NULL THEN
-        has_update := FORMAT(0);
+        has_update := FORMAT($$,0 AS has_update$$);
     ELSE
         has_update := FORMAT($Case$
             ,SUM(CASE 
@@ -84,7 +84,7 @@ BEGIN
     END IF;
 
     IF var_ignore_columns IS NULL THEN
-        has_ignore := FORMAT(0);
+        has_ignore := FORMAT($$,0 AS has_ignore$$);
     ELSE
         has_ignore := FORMAT($Case$
             ,SUM(CASE 
@@ -174,7 +174,7 @@ BEGIN
     IF increment_exist THEN
         has_increment:= CONCAT(has_increment, FORMAT($Case$ ELSE 0 END) AS has_increment$Case$)::TEXT);
     ELSE
-        has_increment := FORMAT(0);
+        has_increment := FORMAT($$,0 AS has_increment$$);
     END IF;
 
     ------------------------
@@ -211,7 +211,7 @@ BEGIN
             %s
             %s
             %s
-        FROM root.tv_test_table 
+        FROM %s.%s 
         where 1=1
         %s
         %s
@@ -224,6 +224,8 @@ BEGIN
         , has_ignore
         , has_update
         , has_increment
+        , var_schema_name
+        , var_table_name
         , pk_condition
         , double_dollar
         , ignore_values
@@ -252,7 +254,6 @@ BEGIN
             END IF;
         END IF;
     ELSEIF TG_OP = 'DELETE' THEN
-
         UPDATE %2$s.%3$s SET v_valid_to = now(), v_last_change=now() ,v_changed_by = USER::TEXT WHERE 1=1 %9$s;
         INSERT INTO %2$s.%3$s (%4$s) VALUES (%6$s);
     END IF;

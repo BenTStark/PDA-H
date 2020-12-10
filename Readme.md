@@ -35,3 +35,8 @@ ToDO:
 - Possible folder structure (tables, functions, queries); file structure (config seperate from table, init file, etc.)
 
 TEST CASES: Test Tabels with init and Check if output is correct. Necessary when project will be be further improved.
+
+
+Timeseries und versioning funzen nocht... uach nicht rekommendet
+
+Alles in Verbindung mit changelog noch testen.

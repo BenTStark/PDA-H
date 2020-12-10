@@ -12,7 +12,7 @@ DECLARE
     trigger_short_name VARCHAR(256);
     function_short_name VARCHAR(256);
     object_array TEXT [ ];
-    prefixes VARCHAR(2)[] := array['v', 'vv', 'vd'];
+    prefixes VARCHAR(2)[] := array['vt', 'vv', 'vd'];
     prefix VARCHAR(2);
     triggers VARCHAR(20)[] := array['after','before', 'instead_of'];
     trigger VARCHAR(20);
