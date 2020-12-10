@@ -20,7 +20,8 @@ BEGIN
     var_index_name)::TEXT;
     EXECUTE sql INTO exist_test;
     IF exist_test AND var_drop THEN
-         sql:= FORMAT($Dynamic$ DROP INDEX IF EXISTS %s;
+        raise notice 'DROPING INDEX: %', var_index_name;
+        sql:= FORMAT($Dynamic$ DROP INDEX IF EXISTS %s;
                 $Dynamic$,
                 var_index_name)::TEXT;
         EXECUTE sql;

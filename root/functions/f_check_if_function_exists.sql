@@ -37,6 +37,7 @@ BEGIN
             var_schema_name, var_function_name)::TEXT;
         FOR r IN EXECUTE sql
         LOOP
+            raise notice 'DROPING FUNCION: %.%', var_schema_name,var_function_name;
             sql:= FORMAT($Dynamic$ 
                 DROP FUNCTION IF EXISTS %s.%s (%s);
                 $Dynamic$,

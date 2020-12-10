@@ -23,9 +23,10 @@ BEGIN
     var_sequence_name)::TEXT;
     EXECUTE sql INTO exist_test;
     IF exist_test AND var_drop THEN
-       sql:= FORMAT($Dynamic$ DROP SEQUENCE IF EXISTS %s;
-              $Dynamic$,
-              full_sequence_name)::TEXT;
+        raise notice 'DROPING SEQUENCE: %', full_sequence_name;
+        sql:= FORMAT($Dynamic$ DROP SEQUENCE IF EXISTS %s;
+            $Dynamic$,
+            full_sequence_name)::TEXT;
         EXECUTE sql;
     END IF;
     RETURN exist_test;

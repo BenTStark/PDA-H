@@ -22,9 +22,10 @@ BEGIN
     var_table_name)::TEXT;
     EXECUTE sql INTO exist_test;
     IF exist_test AND var_drop THEN
-         sql:= FORMAT($Dynamic$ DROP TABLE IF EXISTS %s;
-                $Dynamic$,
-                full_table_name)::TEXT;
+        raise notice 'DROPING TABLE: %', full_table_name;
+        sql:= FORMAT($Dynamic$ DROP TABLE IF EXISTS %s;
+            $Dynamic$,
+            full_table_name)::TEXT;
         EXECUTE sql;
     END IF;
     RETURN exist_test;

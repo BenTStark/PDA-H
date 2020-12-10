@@ -21,6 +21,7 @@ BEGIN
     var_schema_name,
     var_view_name) INTO exist_test;
     IF exist_test AND var_drop THEN
+        raise notice 'DROPING VIEW: %', view_name;
         EXECUTE FORMAT($Dynamic$ DROP VIEW IF EXISTS %s;
                 $Dynamic$,
                 view_name);

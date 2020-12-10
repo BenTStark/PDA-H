@@ -37,7 +37,6 @@ BEGIN
             FOREACH trigger IN ARRAY triggers
             LOOP
                 trigger_short_name:= FORMAT('t_%s_%s_%s', trigger, prefix, table_name);
-                raise notice 'drop trigger: %s', trigger_short_name;
                 view_name:= FORMAT('%s.%s_%s', var_schema_name, prefix, table_name);
                 PERFORM
                     root.f_check_if_trigger_exists (var_schema_name,
@@ -62,7 +61,6 @@ BEGIN
             FOREACH trigger IN ARRAY triggers
             LOOP
                 function_short_name:= FORMAT('tf_%s_%s_%s',trigger, prefix, table_name);
-                raise notice 'drop triggerfunction: %s', function_short_name;
                 PERFORM
                     root.f_check_if_function_exists (var_schema_name,
                         function_short_name,
@@ -78,7 +76,6 @@ BEGIN
         FOREACH prefix IN ARRAY prefixes
         LOOP
             view_short_name:= FORMAT('%s_%s', prefix, table_name);
-            raise notice 'drop view: %s', view_short_name;
             PERFORM 
                 root.f_check_if_view_exists (var_schema_name,
                     view_short_name,
@@ -91,12 +88,6 @@ BEGIN
             SELECT
                 object_array @> '{function}'::TEXT [ ]) THEN
     ELSE
-        raise notice 'drop functions';
-            function_short_name:= FORMAT('f_%s_changelog', var_table_name);
-        PERFORM
-            root.f_check_if_function_exists (var_schema_name,
-                function_short_name,
-                TRUE);
         function_short_name:= FORMAT('f_%s_timeseries', var_table_name);
         PERFORM
             root.f_check_if_function_exists (var_schema_name,
@@ -113,7 +104,6 @@ BEGIN
             SELECT
                 object_array @> '{table}'::TEXT [ ]) THEN
         ELSE
-            raise notice 'drop table: %s', var_table_name;
             PERFORM
                 root.f_check_if_table_exists (var_schema_name,
                     var_table_name,

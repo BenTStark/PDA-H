@@ -208,17 +208,6 @@ BEGIN
 
     IF var_changelog THEN
     
-    -- WEG
-    PERFORM
-        root.f_changelog (var_schema_name,
-            var_table_name);
-    -- bruach ich das noch?
-    functions:= CONCAT(functions, FORMAT($Dynamic$
-            PERFORM
-                %s.f_%s_changelog ();
-    $Dynamic$
-    , var_schema_name
-    , var_table_name)::TEXT);
     ------------
     SELECT root.f_changelog(var_schema_name,var_table_name) INTO function_body;
     -- CREATE TRIGGER FUNCTION SQL QUERY

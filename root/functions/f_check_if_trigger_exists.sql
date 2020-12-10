@@ -21,10 +21,11 @@ BEGIN
     var_trigger_name)::TEXT;
     EXECUTE sql INTO exist_test;
     IF exist_test AND var_drop THEN
+        raise notice 'DROPING TRIGGER: % ON %', var_trigger_name,var_target_name;
         sql:= FORMAT($Dynamic$ DROP TRIGGER IF EXISTS %s ON %s;
-                $Dynamic$,
-                var_trigger_name,
-                var_target_name)::TEXT;
+            $Dynamic$,
+            var_trigger_name,
+            var_target_name)::TEXT;
         EXECUTE sql;
     END IF;
     RETURN exist_test;

@@ -111,6 +111,6 @@ BEGIN
     
     sql:= CONCAT_WS(CHR(10), sql_changegroup, sql_changelog);
 
-    RETURN sql
+    RETURN sql;
 END;
 $Body$
