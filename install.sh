@@ -35,9 +35,9 @@ fi
 echo ""
 echo -e "\e[1mChecking Files in config\e[0m"
 counter=0
-while IFS= read -r line
+
+while IFS= read -r line || [ -n "$line" ]
 do
-  echo "${line}"
   # no empty lines and no comments
   if [ ${#line} -gt 1 ] && [ ${line:0:1} != "#" ]
   then
@@ -60,7 +60,7 @@ then
 fi
 
 echo -e "\e[1mExecuting DDL statements\e[0m"
-while IFS= read -r line
+while IFS= read -r line || [ -n "$line" ]
 do
   # no empty lines and no comments
   if [ ${#line} -gt 1 ] && [ ${line:0:1} != "#" ]
