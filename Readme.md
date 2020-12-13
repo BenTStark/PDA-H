@@ -1,5 +1,5 @@
 # Postgres Data Administration Helper (PDA-H; PHONETIK:pi dage)
-Helps you to keep track of your data.
+Helps you to keep track of your data - **With timeseries, versioning of tables and changelog implementation**
 
 ## Setup Postgres (Debian example)
 Coming...
