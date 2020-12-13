@@ -1,0 +1,1 @@
+SELECT root.f_config ( 'example', 'tv_versionised_table' ,  true,  'update_col',  'ignore_col',  false,  true);

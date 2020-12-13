@@ -79,7 +79,7 @@ BEGIN
     END IF;
     
     sql_changegroup:= FORMAT($Dynamic$ 
-    INSERT INTO changegroup (userid, created_at, operation, context)
+    INSERT INTO root.changegroup (userid, created_at, operation, context)
     SELECT
         USER, NOW(), TG_OP, '%s';
     $Dynamic$

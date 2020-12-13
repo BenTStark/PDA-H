@@ -1,0 +1,2 @@
+INSERT INTO example.vv_versionised_table (id,normal_col,update_col,ignore_col) VALUES (1,'init_normal','init_update','init_ignore');
+INSERT INTO example.vv_versionised_table (id,normal_col,update_col,ignore_col) VALUES (1,'something new','init_update','ignore is exceptionally updated too');

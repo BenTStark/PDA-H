@@ -1,0 +1,1 @@
+SELECT root.f_config ( 'example', 'timeseries_table' ,  false,  NULL,  NULL,  true,  true);

@@ -1,4 +1,4 @@
---DROP SCHEMA root ;
+DROP SCHEMA IF EXISTS root CASCADE;
 
 CREATE SCHEMA root;
 ALTER DATABASE dev SET search_path TO root,public;
