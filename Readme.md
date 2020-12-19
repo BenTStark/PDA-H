@@ -16,7 +16,6 @@
 <a name="begin"></a>
 Helps you to keep track of your data - **With timeseries, versioning of tables and changelog implementation**
 
-
 ## Setup Postgres (Debian example)
 <a name="setup"></a>
 Coming...
