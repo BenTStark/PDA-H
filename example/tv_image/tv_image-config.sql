@@ -1,0 +1,1 @@
+SELECT root.f_config ( 'example', 'tv_image' ,  true,  NULL,  NULL,  false,  false);

@@ -1,2 +1,2 @@
-INSERT INTO example.ordinary_table (id,info) VALUES (1,'some info');
-INSERT INTO example.ordinary_table (id,info) VALUES (2,'next info');
+INSERT INTO example.ordinary_table (info) VALUES ('some info');
+INSERT INTO example.ordinary_table (info) VALUES ('next info');
