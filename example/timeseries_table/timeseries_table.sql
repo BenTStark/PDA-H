@@ -5,7 +5,7 @@ SELECT
 
 CREATE TABLE IF NOT EXISTS example.timeseries_table (
         id SERIAL NOT NULL,
-        info TEXT NOT NULL,
+        info TEXT NOT NULL DEFAULT 'info',
         valid_from TIMESTAMPTZ NOT NULL,
         valid_to TIMESTAMPTZ NOT NULL,
         modified_at TIMESTAMPTZ NOT NULL DEFAULT now(),

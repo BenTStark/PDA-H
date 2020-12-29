@@ -117,7 +117,7 @@ BEGIN
         IF (SELECT update_columns @> FORMAT('{%s}',column_info[1])::TEXT [ ]) THEN
             -- NEW COLUMN VALUES WILL ONLY BE UPDATED
             has_update:= CONCAT(has_update, FORMAT($Case$
-            WHEN %s <> '%s'::%s THEN 1
+            WHEN %s IS DISTINCT FROM '%s'::%s THEN 1
             $Case$
             , column_info[1]
             , CONCAT(Chr(37),'s')
@@ -128,7 +128,7 @@ BEGIN
         ELSEIF (SELECT ignore_columns @> FORMAT('{%s}',column_info[1])::TEXT [ ]) THEN
             -- NEW COLUMN VALUES WILL BE IGNORED
             has_ignore:= CONCAT(has_ignore, FORMAT($Case$
-            WHEN %s <> '%s'::%s THEN 1
+            WHEN %s IS DISTINCT FROM '%s'::%s THEN 1
             $Case$
             , column_info[1]
             , CONCAT(Chr(37),'s')
@@ -139,7 +139,7 @@ BEGIN
             -- NEW COLUMN VALUES LEADS TO INCREMENT 
             increment_exist := true;
             has_increment:= CONCAT(has_increment, FORMAT($Case$
-            WHEN %s <> '%s'::%s THEN 1
+            WHEN %s IS DISTINCT FROM '%s'::%s THEN 1
             $Case$
             , column_info[1]
             , CONCAT(Chr(37),'s')
@@ -185,13 +185,13 @@ BEGIN
         SELECT 
             count(*) as cnt
             , SUM(CASE 
-                WHEN ignore_col <> '%s'
+                WHEN ignore_col IS DISTINCT FROM '%s'
                 THEN 1 ELSE 0 END) AS has_ignore
             , SUM(CASE 
-                WHEN update_col <> '%s'
+                WHEN update_col IS DISTINCT FROM '%s'
                 THEN 1 ELSE 0 END) AS has_update
             , SUM(CASE 
-                WHEN normal_col <> '%s'
+                WHEN normal_col IS DISTINCT FROM '%s'
                 THEN 1 ELSE 0 END) AS has_increment
         FROM root.tv_test_table 
         where 1=1
@@ -262,7 +262,7 @@ BEGIN
     , var_schema_name
     , var_table_name
     , SUBSTRING(REPLACE(column_list,'prefix.',''),2)
-    , SUBSTRING(REPLACE(REPLACE(column_list_values,'prefix.','NEW.'),'DELETE_FLAG','N'),2)
+    , SUBSTRING(REPLACE(REPLACE(column_list_values,'prefix.','var_'),'DELETE_FLAG','N'),2)
     , SUBSTRING(REPLACE(REPLACE(column_list_values,'prefix.','OLD.'),'DELETE_FLAG','Y'),2)
     , REPLACE(set_update_columns,'prefix.','NEW.')
     , REPLACE(conditon_pk_columns,'prefix.','NEW.')

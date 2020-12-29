@@ -19,6 +19,7 @@ DECLARE
     sql_v TEXT;
     functions TEXT; --TODO: DELETE After refactoring
     function_body TEXT;
+    dynamic_variables TEXT [];
     sql TEXT;
 BEGIN
     double_dollar:= FORMAT('%s', CONCAT(CHR(36), 'Body', CHR(36)));
@@ -78,6 +79,38 @@ BEGIN
     IF var_versioning THEN
         -- FIRST STEP: CREATE VIEWS
         -- VERSIONISED VIEW
+        -- dynamic variables is used for the DEFAULT usage. That means, if a variable has NULL value and there is a 
+        -- DEFAULT value set in TABLE CREATE Statement. Then this DEFAULT value is used for the insert.
+        EXECUTE FORMAT($Dynamic$ 
+            SELECT ARRAY[
+                  STRING_AGG(CONCAT_WS(' ',
+                    'var_' || c.column_name
+                    , p.typname
+                    , CASE WHEN c.column_default IS NOT NULL THEN 'DEFAULT' ELSE NULL END
+                    , c.column_default
+                    , ';'), Chr(10)) 
+                ,  STRING_AGG(CONCAT(
+                      'IF NEW.'
+                    , c.column_name
+                    , ' IS NOT NULL THEN'
+                    , Chr(10)
+                    , Chr(9)
+                    , 'var_'
+                    , c.column_name
+                    , ' := NEW.'
+                    , c.column_name
+                    , ';'
+                    , Chr(10)
+                    , 'END IF;'),Chr(10))]
+            FROM information_schema.columns c
+            LEFT JOIN pg_type p ON c.data_type::regtype::oid = p.oid
+            WHERE 1=1
+            AND c.table_schema = '%1$s'
+	        AND c.table_name = '%2$s'
+            $Dynamic$
+            , var_schema_name
+            , var_table_name)::TEXT INTO dynamic_variables;
+
         sql_v:= FORMAT($Dynamic$ 
             CREATE OR REPLACE VIEW %s
             AS
@@ -121,7 +154,9 @@ BEGIN
                 has_ignore INT DEFAULT 0;
                 has_update INT DEFAULT 0;
                 has_increment INT DEFAULT 0;
+                %s
             BEGIN
+                %s
                 %s 
                 RETURN NULL;
             END; %s
@@ -129,6 +164,8 @@ BEGIN
             , var_schema_name
             , SUBSTRING(var_table_name,4)
             , double_dollar
+            , dynamic_variables[1]
+            , dynamic_variables[2]
             , function_body
             , double_dollar)::TEXT;
         
@@ -156,7 +193,7 @@ BEGIN
     
     IF var_timeseries THEN
         SELECT root.f_timeseries(var_schema_name,var_table_name,var_versioning) INTO function_body;
-        
+     
         sql_v:= FORMAT($Dynamic$ 
             CREATE OR REPLACE VIEW %s
             AS

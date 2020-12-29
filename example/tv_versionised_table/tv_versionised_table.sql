@@ -5,7 +5,7 @@ SELECT
 
 CREATE TABLE IF NOT EXISTS example.tv_versionised_table (
         id SERIAL NOT NULL,
-        normal_col TEXT,
+        normal_col TEXT NOT NULL DEFAULT 'normal',
         update_col TEXT,
         ignore_col TEXT,
         v_valid_from TIMESTAMPTZ NOT NULL DEFAULT TIMESTAMPTZ '1970-01-01 00:00:00',
